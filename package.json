@@ -1,0 +1,16 @@
+{
+  "name": "omp-discord",
+  "version": "0.1.0",
+  "description": "Discord Rich Presence extension for Oh My Pi (omp)",
+  "type": "module",
+  "main": "./src/index.ts",
+  "omp": {
+    "extensions": ["./src/index.ts"]
+  },
+  "pi": {
+    "extensions": ["./src/index.ts"]
+  },
+  "scripts": {
+    "test": "bun test"
+  }
+}

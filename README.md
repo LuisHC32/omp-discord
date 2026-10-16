@@ -77,7 +77,7 @@ Si definiste `PI_CODING_AGENT_DIR`, el archivo queda en ese directorio como `dis
 ```json
 {
   "enabled": true,
-  "clientId": "782685898163617802",
+  "clientId": "{clientId}",
   "appName": "VibeCoding",
   "privacy": "full",
   "showProject": true,

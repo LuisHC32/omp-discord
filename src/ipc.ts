@@ -100,7 +100,16 @@ export interface DiscordIpcClientOptions {
 	clearScheduledTimeout?: (handle: unknown) => void;
 }
 
-export class DiscordIpcClient {
+export interface IpcClientLike {
+	isConnected(): boolean;
+	connect(): Promise<boolean>;
+	setClientId(clientId: string): Promise<boolean>;
+	setActivity(activity: DiscordActivity | null): Promise<void>;
+	clearActivity(): Promise<void>;
+	close(): Promise<void>;
+}
+
+export class DiscordIpcClient implements IpcClientLike {
 	#clientId: string;
 	#candidatePaths?: string[];
 	#minUpdateIntervalMs: number;

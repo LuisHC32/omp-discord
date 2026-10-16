@@ -1,46 +1,80 @@
 # omp-discord
 
-Extensión nativa de **Discord Rich Presence** para **Oh My Pi (`omp`)** sin dependencias externas.
+Extensión de Discord Rich Presence para **Oh My Pi (`omp`)**. No instala dependencias: habla con el cliente de Discord de escritorio por IPC local.
 
-Muestra automáticamente en tu estado de Discord cuando estás programando con `omp`:
-- **Proyecto actual** (`cwd`)
-- **Actividad en tiempo real** (*Pensando...*, *Editando `archivo.ts`*, *Leyendo `archivo.ts`*, *Ejecutando comando*, *Explorando el código*, *Coordinando subagentes*, *En espera*)
-- **Modelo activo** (ej. `gemini-4-argon`, `claude-sonnet-4`)
-- **Tiempo de sesión transcurrido**
-- **Ocultación automática en inactividad (Idle)** tras 10 minutos sin actividad (configurable)
+Con Discord abierto, el perfil queda así:
+
+```text
+VibeCoding With grok-4
+Proyecto: omp-discord
+En espera
+4:03
+```
+
+- El título es `appName` más el modelo activo (`VibeCoding With grok-4`). Si el id trae proveedor (`openrouter/x-ai/grok-4`), se muestra solo `grok-4`.
+- La segunda línea es el proyecto (`cwd`).
+- La tercera es la actividad: `Pensando...`, `Editando archivo.ts`, `Leyendo archivo.ts`, `Ejecutando comando`, `Explorando el código`, `Coordinando subagentes` o `En espera`.
+- El tiempo de abajo es el de la sesión. Tras 10 minutos en espera, la presencia se oculta.
+
+Hace falta el cliente de Discord de escritorio. La versión del navegador no expone el IPC.
 
 ## Instalación
 
-### Opción 1: Instalación global en `~/.omp/agent/extensions/`
-Enlaza o copia este directorio dentro de `~/.omp/agent/extensions/omp-discord`:
+### Desde Git
 
-```bash
-# En Windows (PowerShell)
-New-Item -ItemType Junction -Path "$HOME\.omp\agent\extensions\omp-discord" -Target (Get-Location).Path
+Clona el repositorio e instálalo como plugin. `omp` lo enlaza y lo carga en las sesiones siguientes:
 
-# En Linux / macOS
-ln -s "$(pwd)" ~/.omp/agent/extensions/omp-discord
+```sh
+git clone <url-de-este-repositorio> omp-discord
+cd omp-discord
+omp plugin install .
 ```
 
-### Opción 2: Cargar por CLI en una sesión puntual
-```bash
+Si está en GitHub, el atajo equivalente es:
+
+```sh
+omp plugin install github:<usuario>/omp-discord
+```
+
+Reinicia `omp` después de instalar. Un `omp` que ya estaba abierto no carga la extensión nueva hasta ese reinicio.
+
+### Solo esta sesión
+
+Desde la raíz del repo, sin dejarla instalada:
+
+```sh
 omp --extension ./src/index.ts
 ```
 
-## Comandos dentro de `omp`
+## Primer uso
 
-- `/discord` o `/discord status`: Muestra estado de conexión IPC y configuración actual.
-- `/discord on` | `/discord off`: Activa o desactiva la presencia en Discord en caliente.
+Dentro de `omp`:
+
+```text
+/discord start
+```
+
+Ese comando escribe `~/.omp/agent/discord-presence.json` con la configuración por defecto, lo aplica y activa la presencia. Si el archivo ya existe, conserva sus valores, pone `enabled` en `true` y vuelve a publicarla.
+
+La presencia también arranca sin ese archivo: usa los valores por defecto que trae el código. El JSON solo se crea cuando `/discord` guarda un cambio.
+
+Si definiste `PI_CODING_AGENT_DIR`, el archivo queda en ese directorio como `discord-presence.json`.
+
+## Comandos
+
+- `/discord` o `/discord status`: estado de la conexión IPC y la configuración actual. No escribe el JSON.
+- `/discord start`: crea o reescribe el JSON, lo aplica y activa la presencia.
+- `/discord on` | `/discord off`: activa o desactiva la presencia y guarda `enabled`.
 - `/discord privacy <full|moderate|private>`:
-  - `full` (por defecto): Muestra proyecto, archivo/herramienta actual y modelo.
-  - `moderate`: Muestra proyecto y modelo, ocultando nombres de archivos/herramientas.
-  - `private`: Muestra únicamente `"Programando con omp"` y el tiempo transcurrido.
-- `/discord idle <minutos>`: Define cuántos minutos esperar en estado inactivo antes de ocultar la presencia (`0` para no ocultar nunca).
-- `/discord client-id <id>`: Configura tu propio Application ID de Discord Developer Portal (por ejemplo, si creas una App llamada **"Oh My Pi"** para personalizar el título *"Jugando a Oh My Pi"* y los íconos).
+  - `full`: proyecto, archivo o herramienta, y modelo en el título.
+  - `moderate`: proyecto y modelo. La actividad pasa a `Agente trabajando`.
+  - `private`: solo `Programando con omp` y el tiempo. El título queda en `VibeCoding`, sin modelo.
+- `/discord idle <minutos>`: minutos en espera antes de ocultar la presencia. `0` no la oculta nunca.
+- `/discord client-id <id>`: Application ID de tu app en el Discord Developer Portal.
 
-## Configuración y Variables de Entorno
+## Configuración
 
-La configuración se guarda automáticamente en `~/.omp/agent/discord-presence.json`:
+`/discord start` deja este archivo en `~/.omp/agent/discord-presence.json`:
 
 ```json
 {
@@ -57,13 +91,10 @@ La configuración se guarda automáticamente en `~/.omp/agent/discord-presence.j
 }
 ```
 
-Variables de entorno soportadas (tienen prioridad sobre el archivo):
-- `OMP_DISCORD_CLIENT_ID`: Sobrescribe el Client ID de Discord.
+`appName` es el título. Con `showModel` en `true` se le añade ` With <modelo>`. `largeImageKey` es el icono grande.
+
+Estas variables pisan el archivo al cargar la sesión, pero no se guardan dentro de él:
+
+- `OMP_DISCORD_CLIENT_ID`: Client ID de Discord.
 - `OMP_DISCORD_ENABLED`: `true`/`1` o `false`/`0`.
 - `OMP_DISCORD_PRIVACY`: `full`, `moderate` o `private`.
-
-## Desarrollo y Tests
-
-```bash
-bun test
-```

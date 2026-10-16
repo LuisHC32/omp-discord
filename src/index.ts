@@ -8,6 +8,7 @@ import {
 	type DiscordPresenceConfig,
 	loadConfig,
 	type PrivacyLevel,
+	resolveConfigPath,
 	saveConfig,
 } from "./config";
 import { DiscordIpcClient, type DiscordIpcClientOptions, type IpcClientLike } from "./ipc";
@@ -254,13 +255,25 @@ export function createDiscordExtension(deps?: DiscordExtensionDeps): (pi: Extens
 
 		pi.registerCommand("discord", {
 			description:
-				"Controla Discord Rich Presence (/discord [status|on|off|privacy <full|moderate|private>|idle <min>|client-id <id>])",
+				"Controla Discord Rich Presence (/discord [status|start|on|off|privacy <full|moderate|private>|idle <min>|client-id <id>])",
 			handler: async (args, ctx) => {
 				const parts = args.trim().split(/\s+/).filter(Boolean);
 				const sub = (parts[0] ?? "status").toLowerCase();
 				const argVal = parts[1];
 
 				const client = ensureIpcClient(ctx);
+
+				if (sub === "start") {
+					config = saveConfig({ enabled: true }, { configPath: deps?.configPath });
+					const writtenPath = deps?.configPath ?? resolveConfigPath(deps?.env);
+					await client.connect();
+					await syncActivity(ctx);
+					ctx.ui?.notify?.(
+						`Discord Rich Presence iniciado. Configuración: ${writtenPath}`,
+						"info",
+					);
+					return;
+				}
 
 				if (sub === "on") {
 					config = saveConfig({ enabled: true }, { configPath: deps?.configPath });

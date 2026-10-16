@@ -50,6 +50,27 @@ export function extractProjectName(cwd: string): string {
 	return segments[segments.length - 1] || "workspace";
 }
 
+const DISCORD_NAME_LIMIT = 128;
+
+function visibleModelLabel(
+	modelName: string | undefined,
+	config: DiscordPresenceConfig,
+): string | undefined {
+	if (config.privacy === "private" || !config.showModel) return undefined;
+	const trimmed = modelName?.trim();
+	if (!trimmed) return undefined;
+	const slash = trimmed.lastIndexOf("/");
+	const short = (slash >= 0 ? trimmed.slice(slash + 1) : trimmed).trim();
+	return short || trimmed;
+}
+
+function activityTitle(appName: string, modelLabel: string | undefined): string {
+	if (!modelLabel) return appName.slice(0, DISCORD_NAME_LIMIT);
+	const prefix = `${appName} With `;
+	if (prefix.length >= DISCORD_NAME_LIMIT) return appName.slice(0, DISCORD_NAME_LIMIT);
+	return `${prefix}${modelLabel}`.slice(0, DISCORD_NAME_LIMIT);
+}
+
 function formatToolState(
 	toolName: string,
 	target: string | undefined,
@@ -145,12 +166,13 @@ export function buildDiscordActivity(
 		large_text: config.largeImageText,
 	};
 
-	if (config.privacy !== "private" && config.showModel && state.modelName) {
-		assets.small_text = `Modelo: ${state.modelName}`;
+	const modelLabel = visibleModelLabel(state.modelName, config);
+	if (modelLabel) {
+		assets.small_text = `Modelo: ${modelLabel}`;
 	}
 
 	return {
-		name: config.appName,
+		name: activityTitle(config.appName, modelLabel),
 		details,
 		state: activityState,
 		timestamps: {

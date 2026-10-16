@@ -111,7 +111,9 @@ describe("activity", () => {
 		const moderateAct = buildDiscordActivity(toolState, moderateCfg);
 		expect(moderateAct?.details).toBe("Proyecto: omp-discord");
 		expect(moderateAct?.state).toBe("Agente trabajando");
+		expect(moderateAct?.name).toBe("VibeCoding");
 		expect(moderateAct?.assets.small_text).toBe("Modelo: gemini-4-argon");
+		expect(moderateAct?.assets.large_image).toBe("https://omp.sh/favicon-512x512.png");
 
 		const privateCfg: DiscordPresenceConfig = { ...DEFAULT_CONFIG, privacy: "private" };
 		const privateAct = buildDiscordActivity(toolState, privateCfg);

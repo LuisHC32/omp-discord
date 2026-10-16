@@ -46,13 +46,14 @@ La configuración se guarda automáticamente en `~/.omp/agent/discord-presence.j
 {
   "enabled": true,
   "clientId": "782685898163617802",
+  "appName": "VibeCoding",
   "privacy": "full",
   "showProject": true,
   "showDetails": true,
   "showModel": true,
   "idleTimeoutMinutes": 10,
-  "largeImageKey": "code",
-  "largeImageText": "Oh My Pi (omp)"
+  "largeImageKey": "https://omp.sh/favicon-512x512.png",
+  "largeImageText": "Oh My Pi (omp.sh)"
 }
 ```
 

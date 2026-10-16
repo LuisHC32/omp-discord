@@ -38,6 +38,8 @@ describe("config", () => {
 		expect(cfg.enabled).toBe(true);
 		expect(cfg.privacy).toBe("full");
 		expect(cfg.idleTimeoutMinutes).toBe(10);
+		expect(cfg.appName).toBe("VibeCoding");
+		expect(cfg.largeImageKey).toBe("https://omp.sh/favicon-512x512.png");
 	});
 
 	test("loadConfig falls back to defaults on corrupted JSON or negative idleTimeoutMinutes", () => {

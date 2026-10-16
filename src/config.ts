@@ -7,6 +7,7 @@ export type PrivacyLevel = "full" | "moderate" | "private";
 export interface DiscordPresenceConfig {
 	enabled: boolean;
 	clientId: string;
+	appName: string;
 	privacy: PrivacyLevel;
 	showProject: boolean;
 	showDetails: boolean;
@@ -17,17 +18,19 @@ export interface DiscordPresenceConfig {
 }
 
 export const DEFAULT_DISCORD_CLIENT_ID = "782685898163617802";
+export const DEFAULT_OMP_ICON_URL = "https://omp.sh/favicon-512x512.png";
 
 export const DEFAULT_CONFIG: DiscordPresenceConfig = {
 	enabled: true,
 	clientId: DEFAULT_DISCORD_CLIENT_ID,
+	appName: "VibeCoding",
 	privacy: "full",
 	showProject: true,
 	showDetails: true,
 	showModel: true,
 	idleTimeoutMinutes: 10,
-	largeImageKey: "code",
-	largeImageText: "Oh My Pi (omp)",
+	largeImageKey: DEFAULT_OMP_ICON_URL,
+	largeImageText: "Oh My Pi (omp.sh)",
 };
 
 export function resolveConfigPath(
@@ -51,6 +54,10 @@ function sanitizeConfig(raw: Record<string, unknown>): DiscordPresenceConfig {
 		typeof raw.clientId === "string" && raw.clientId.trim().length > 0
 			? raw.clientId.trim()
 			: DEFAULT_CONFIG.clientId;
+	const appName =
+		typeof raw.appName === "string" && raw.appName.trim().length > 0
+			? raw.appName.trim()
+			: DEFAULT_CONFIG.appName;
 	const privacy = isPrivacyLevel(raw.privacy) ? raw.privacy : DEFAULT_CONFIG.privacy;
 	const showProject =
 		typeof raw.showProject === "boolean" ? raw.showProject : DEFAULT_CONFIG.showProject;
@@ -65,7 +72,9 @@ function sanitizeConfig(raw: Record<string, unknown>): DiscordPresenceConfig {
 			? raw.idleTimeoutMinutes
 			: DEFAULT_CONFIG.idleTimeoutMinutes;
 	const largeImageKey =
-		typeof raw.largeImageKey === "string" && raw.largeImageKey.trim().length > 0
+		typeof raw.largeImageKey === "string" &&
+		raw.largeImageKey.trim().length > 0 &&
+		raw.largeImageKey.trim() !== "code"
 			? raw.largeImageKey.trim()
 			: DEFAULT_CONFIG.largeImageKey;
 	const largeImageText =
@@ -76,6 +85,7 @@ function sanitizeConfig(raw: Record<string, unknown>): DiscordPresenceConfig {
 	return {
 		enabled,
 		clientId,
+		appName,
 		privacy,
 		showProject,
 		showDetails,

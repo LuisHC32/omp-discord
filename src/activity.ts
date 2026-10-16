@@ -15,6 +15,7 @@ export interface SessionActivityState {
 }
 
 export interface DiscordActivity {
+	name?: string;
 	details: string;
 	state: string;
 	timestamps: { start: number };
@@ -149,6 +150,7 @@ export function buildDiscordActivity(
 	}
 
 	return {
+		name: config.appName,
 		details,
 		state: activityState,
 		timestamps: {

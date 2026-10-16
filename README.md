@@ -16,8 +16,6 @@ En espera
 - La tercera es la actividad: `Pensando...`, `Editando archivo.ts`, `Leyendo archivo.ts`, `Ejecutando comando`, `Explorando el código`, `Coordinando subagentes` o `En espera`.
 - El tiempo de abajo es el de la sesión. Tras 10 minutos en espera, la presencia se oculta.
 
-Hace falta el cliente de Discord de escritorio. La versión del navegador no expone el IPC.
-
 ## Instalación
 
 ### Desde Git

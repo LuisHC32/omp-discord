@@ -23,15 +23,15 @@ En espera
 Clona el repositorio e instálalo como plugin. `omp` lo enlaza y lo carga en las sesiones siguientes:
 
 ```sh
-git clone <url-de-este-repositorio> omp-discord
+git clone https://github.com/LuisHC32/omp-discord.git
 cd omp-discord
 omp plugin install .
 ```
 
-Si está en GitHub, el atajo equivalente es:
+El atajo equivalente es:
 
 ```sh
-omp plugin install github:<usuario>/omp-discord
+omp plugin install github:LuisHC32/omp-discord
 ```
 
 Reinicia `omp` después de instalar. Un `omp` que ya estaba abierto no carga la extensión nueva hasta ese reinicio.
